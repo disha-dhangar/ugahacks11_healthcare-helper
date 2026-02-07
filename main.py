@@ -12,14 +12,31 @@ st.title("Healthcare Helper")
 st.subheader("Welcome to Healthcare Helper, an application to help you find healthcare services nearby.")
 
 input = st.text_input("Enter an address :")
-location = geolocator.geocode(input)
+
+metrics = st.slider("Distance (meters):", 0, 5000)
+queries = st.number_input("Results:", min_value=1, max_value=20, value=1)
+category = st.multiselect("Healthcare services:", ["Hospital", "Dentist", "Pharmacy", "Orthodontics"])
 
 if st.button("Search"):
+    location = geolocator.geocode(input)
+
+    categories = {  
+        "hospital": "healthcare.hospital",
+        "dentist": "healthcare.dentist",
+        "pharmacy": "healthcare.pharmacy",
+        "orthodontics": "healthcare.orthodontics"
+    }
+
+    if not category:
+        categories_param = "healthcare"
+    else:
+        categories_param = ",".join([categories[c.lower()] for c in category])
+
     params = {
-        "categories": "healthcare",
-        "filter": f"circle:{location.longitude},{location.latitude},5000",
+        "categories": categories_param,
+        "filter": f"circle:{location.longitude},{location.latitude},{metrics}",
         "bias": f"proximity:{location.longitude},{location.latitude}",
-        "limit": 15,
+        "limit": int(queries),
         "apiKey": GEOAPIFY_API_KEY
     }
 
