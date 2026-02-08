@@ -9,6 +9,10 @@ from geopy.geocoders import Nominatim
 GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
 geolocator = Nominatim(user_agent="Healthcare Helper")
 
+# Check if API key is set
+if not GEOAPIFY_API_KEY:
+    st.error("API key not set. Please set GEOAPIFY_API_KEY in your environment. Refer to Geoapify documentation as needed.")
+
 # Loads CSS for styling
 with open("display.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -103,7 +107,7 @@ if st.button("Search"):
                 "rheumatology": "healthcare.clinic_or_praxis.rheumatology",
                 "trauma": "healthcare.clinic_or_praxis.trauma",
                 "urology": "healthcare.clinic_or_praxis.urology",
-                "vascular surgery": "healthcare.clinic_or_praxis.vascular surgery",
+                "vascular surgery": "healthcare.clinic_or_praxis.vascular_surgery",
             }
 
 
@@ -111,8 +115,7 @@ if st.button("Search"):
             categories_param = api_categories.get(categories.lower())
 
             # Calculates total number of results to request from the API
-            requested_per_category = int(results_amount)
-            total_request_limit = min(requested_per_category * max(1, len(categories)), 50)
+            total_request_limit = int(results_amount)
 
 
             # Prepares API request parameters
