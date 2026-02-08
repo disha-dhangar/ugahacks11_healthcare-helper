@@ -13,7 +13,7 @@ Tools Utilized: Copilot and ChatGPT were utilized to make planning, designing, i
 Problems & Solutions: Many challenges arose during this project. The main obstacles included identifying a problem in the community and addressing it through the application, utlizing specific Streamlit features, connecting with APIs, ensuring correct results from the API, and handling edge cases. Various tools were used to overcome these challenges. Extensive research, careful planning and designing, and consulting with knowledgeable individuals were extremely helpful. Additionally, thoroughly reading the documentation made understanding and implementing the code much easier. As the project progressed, new edge cases emerged, which required careful consideration to prevent issues for end users. 
 
 
-Credits:
-Geopy (https://geopy.readthedocs.io/) 
-Geoapify (https://apidocs.geoapify.com/docs/places/)
-Streamlit documents (https://docs.streamlit.io/) 
+Credits:<br>  
+Geopy (https://geopy.readthedocs.io/)<br>  
+Geoapify (https://apidocs.geoapify.com/docs/places/)<br>   
+Streamlit documents (https://docs.streamlit.io/)<br>  
