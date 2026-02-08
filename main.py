@@ -1,11 +1,10 @@
-import requests
-import os
-import sys
-import streamlit as st
 from geopy.geocoders import Nominatim
+import requests
+from dotenv import load_dotenv
+import streamlit as st
 
 
-# Geoapify Api Key and GeoPy API used (pip install geopy)
+# Geoapify Api Key and GeoPy API used
 GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
 geolocator = Nominatim(user_agent="Healthcare Helper")
 
