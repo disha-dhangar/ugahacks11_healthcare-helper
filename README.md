@@ -14,6 +14,7 @@ Problems & Solutions: Many challenges arose during this project. The main obstac
 
 
 Credits:
+
 Geopy (https://geopy.readthedocs.io/)  
 Geoapify (https://apidocs.geoapify.com/docs/places/)     
 Streamlit documents (https://docs.streamlit.io/)  
