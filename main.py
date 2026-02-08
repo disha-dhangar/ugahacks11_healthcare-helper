@@ -5,20 +5,34 @@ import streamlit as st
 from geopy.geocoders import Nominatim
 
 
-GEOAPIFY_API_KEY = "14a1a56e438e4c6c8324475d9fe9aa8e"
+# Geoapify Api Key and GeoPy API used (pip install geopy)
+GEOAPIFY_API_KEY = os.getenv("GEOAPIFY_API_KEY")
 geolocator = Nominatim(user_agent="Healthcare Helper")
-#url = "https://api.geoapify.com/v2/places?params"
 
-st.title("Healthcare Helper")
+# Loads CSS for styling
+with open("display.css") as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Personalizes page title and icon
+st.set_page_config(
+    page_title="Healthcare Helper", 
+    page_icon="🏥", 
+)
+
+
+# Title and description
+st.title("°✧˖ Healthcare Helper ˖✧°")
 st.subheader("Welcome to Healthcare Helper, an application to help you find healthcare services nearby easily and efficiently.")
 st.write("Simply enter an address below to get started. You may filter out the results using the options provided.")
 st.write("---")
 
-input = st.text_input("Enter an address :")
+# User input of location
+location_input = st.text_input("Enter a city, zip code, or address :", key="address")
 
-metrics = st.slider("Distance (meters):", 0, 20000, 10000)
-queries = st.number_input("Results:", min_value=1, max_value=20, value=10)
-category = st.selectbox(
+# User input for search parameters
+distance = st.slider("Distance (meters):", 0, 20000, 10000)
+results_amount = st.number_input("Results:", min_value=1, max_value=20, value=10)
+categories = st.selectbox(
     "Healthcare services:", 
     ["Show All",
     "Allergology",
@@ -47,19 +61,25 @@ category = st.selectbox(
     ]
 )
 
+
+# Search button logic and API request
 if st.button("Search"):
-    if not input.strip():
+    # Displays warning if location input is empty, otherwise proceeds with geocoding
+    if not location_input.strip():
         st.warning("Please enter an address.")
     else: 
-        location = geolocator.geocode(input)
+        location = geolocator.geocode(location_input)
 
+        # Displays warning if geocoding fails, otherwise proceeds with API request
         if not location:
             st.warning("Address not found. Please enter a valid address.")
         else: 
             searching_placeholder = st.empty()
             searching_placeholder.success("Searching...")
 
-            categories = { #ORIGINALLY LOWER CASE
+
+            # Maps user-friendly category names to Geoapify API categories
+            api_categories = { 
                 "show all": "healthcare",
                 "allergology": "healthcare.clinic_or_praxis.allergology",
                 "cardiology": "healthcare.clinic_or_praxis.cardiology",
@@ -86,33 +106,39 @@ if st.button("Search"):
                 "vascular surgery": "healthcare.clinic_or_praxis.vascular surgery",
             }
 
-            categories_param = categories.get(category.lower())
 
-            requested_per_category = int(queries)
-            total_request_limit = min(requested_per_category * max(1, len(category)), 50)
+            # Gets the API category for the selected service
+            categories_param = api_categories.get(categories.lower())
 
+            # Calculates total number of results to request from the API
+            requested_per_category = int(results_amount)
+            total_request_limit = min(requested_per_category * max(1, len(categories)), 50)
+
+
+            # Prepares API request parameters
             params = {
                 "categories": categories_param,
-                "filter": f"circle:{location.longitude},{location.latitude},{metrics}",
+                "filter": f"circle:{location.longitude},{location.latitude},{distance}",
                 "bias": f"proximity:{location.longitude},{location.latitude}",
                 "limit": int(total_request_limit), 
                 "apiKey": GEOAPIFY_API_KEY
             }
 
+            # Sends request to Geoapify API
             url = "https://api.geoapify.com/v2/places"
             response = requests.get(url, params=params)
             results = response.json()
             features = results.get("features", [])
 
-            #DEBUGGING
-            #st.write("Request URL:", response.url)
-            #st.write("Request params (no API key shown):", {k: v for k, v in params.items() if k != "apiKey"})
-            #st.write("Status code:", response.status_code)
 
+            # Sorts features by distance
             sorted_features = sorted(features, key=lambda x: x['properties']['distance'])
-            top_results = sorted_features[:int(queries)] 
+            top_results = sorted_features[:int(results_amount)] 
 
+            # Clears the searching placeholder 
             searching_placeholder.empty()
+
+            # Displays results (nearby places), or a message if no results are found
             if not top_results:
                 st.subheader("No healthcare services found.")
                 st.write("Please try a different location or adjust your search criteria.")
@@ -125,6 +151,3 @@ if st.button("Search"):
                     st.write(f"**Address**: {feature['properties'].get('formatted', 'N/A')}")
                     st.write(f"**Distance**: {feature['properties'].get('distance', 'N/A')} meters")
                     st.write("---")
-
-
-# ADD CLEAR BUTTON
