@@ -1,3 +1,4 @@
+import os
 from geopy.geocoders import Nominatim
 import requests
 from dotenv import load_dotenv
