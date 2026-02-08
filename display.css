@@ -1,13 +1,16 @@
 .stApp {
+    /* Application */
     background-color: #345C48;
     color: #D8F0E5;
 
+    /* Buttons t*/
     button {
         background-color: #233B2C;
         color: #D8F0E5;
         cursor: pointer;
     }
 
+    /* Title */
     h1 {
         text-align: center;
         color: #D8F0E5;
